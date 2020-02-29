@@ -1,0 +1,24 @@
+version: '2.3'
+
+services:
+
+  pgadmin:
+    image: tophfr/pgadmin:$TAG
+    environment:
+      UID: $USER_ID
+      GID: $GROUP_ID
+      SETUP_SERVER_NAME: postgres@db
+      SETUP_SERVER_HOST: db
+      SETUP_SERVER_PORT: 5432
+      SETUP_SERVER_USER: postgres
+      SETUP_SERVER_PASS: password
+      MASTER_PASSWORD_REQUIRED: 'False'
+    ports:
+      - "$IP:5050:5050"
+
+  db:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_PASSWORD: password
+
+# vim: ts=2 sts=2 sw=2 et:
