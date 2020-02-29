@@ -1,6 +1,6 @@
 FROM python:3.8-alpine
 
-ENV PGADMIN_VERSION 4.16
+ENV PGADMIN_VERSION 4.17
 ENV UID             1000
 ENV GID             50
 
