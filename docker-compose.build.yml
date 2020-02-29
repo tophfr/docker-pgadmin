@@ -6,6 +6,6 @@ services:
     build:
       context: build
       args:
-        PG_ADMIN_VERSION: $VERSION
+        PGADMIN_VERSION: $VERSION
 
 # vim: ts=2 sts=2 sw=2 et:
