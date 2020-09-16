@@ -7,7 +7,7 @@ CONFIG_FILE="$PGADMIN_PATH/config_local.py"
 
 if [ ! -f /data/config/pgadmin4.db ]; then
     su-exec pgadmin python "$PGADMIN_PATH/setup.py"
-    su-exec pgadmin python /scripts/setup-server.py
+    su-exec pgadmin python "$PGADMIN_PATH/setup-server.py"
 fi
 
 if [ "$MASTER_PASSWORD_REQUIRED" != '' ]; then

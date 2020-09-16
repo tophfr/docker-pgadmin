@@ -26,8 +26,7 @@ LABEL   org.label-schema.name="pgAdmin4" \
 
 RUN apk add --no-cache --virtual .run-deps postgresql-client postgresql-libs openssl shadow su-exec bash
 RUN apk add --no-cache --virtual .build-deps make gcc musl-dev openssl postgresql-dev libffi-dev linux-headers \
- && pip3 install werkzeug==0.16.1 \
- && pip3 --no-cache-dir install https://ftp.postgresql.org/pub/pgadmin/pgadmin4/v${PGADMIN_VERSION}/pip/pgadmin4-${PGADMIN_VERSION}-py2.py3-none-any.whl \
+ && pip3 --no-cache-dir install pgadmin4==${PGADMIN_VERSION} \
  && apk del .build-deps \
  && rm -rf /root/.cache
 
@@ -37,7 +36,7 @@ RUN addgroup -g ${GID} -S pgadmin \
  && chown -R ${UID}:${GID} /data \
  && rm -rf /root/.cache
 
-COPY config_local.py /usr/local/lib/python3.8/site-packages/pgadmin4/
+COPY *.py /usr/local/lib/python3.8/site-packages/pgadmin4/
 COPY entrypoint /
 RUN chmod 0775 /entrypoint
 
@@ -47,7 +46,9 @@ ENTRYPOINT ["/entrypoint"]
 
 COPY ./scripts /scripts
 
-RUN cd /usr/local/lib/python3.8/site-packages/pgadmin4 \
-    && patch < /scripts/pga.patch
+RUN apk add --no-cache patch \
+    && cd /usr/local/lib/python3.8/site-packages/pgadmin4 \
+    && patch < /scripts/pga.patch \
+    && apk del patch
 
 CMD ["/scripts/run.sh"]
