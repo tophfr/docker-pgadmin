@@ -7,7 +7,7 @@ from pgadmin.model import db, User, Server
 
 app = create_app(config.APP_NAME)
 with app.app_context():
-    user = User.query.filter_by(email=config.DESKTOP_USER).first()
+    user = User.query.first()
     key = user.password
     i = 0
     while True:
