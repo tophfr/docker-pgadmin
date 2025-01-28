@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [ -z "$PGADMIN_DEFAULT_EMAIL" ]; then
+    export PGADMIN_DEFAULT_EMAIL="admin@domain.tld"
+fi
+if [[ "$PGADMIN_DEFAULT_EMAIL" != *@* ]]; then
+    export PGADMIN_DEFAULT_EMAIL="$PGADMIN_DEFAULT_EMAIL@domain.tld"
+fi
+
 if [ -z "$PGADMIN_SERVER_JSON_FILE" ]; then
     export PGADMIN_SERVER_JSON_FILE="/tmp/servers.json"
 fi
@@ -44,22 +51,24 @@ if [ ! -f "$PGADMIN_SERVER_JSON_FILE" ]; then
         cat >> "$PGADMIN_SERVER_JSON_FILE" << EOL
         "$i": {
             "Name": "${!name}"
-          , "Group": 1
+          , "Group": "Servers"
           , "Port": ${!port}
           , "Username": "${!user}"
           , "Host": "${!host}"
-          , "SSLMode": "prefer"
           , "MaintenanceDB": "postgres"
           , "ConnectionParameters": {
-                "SSLMode": "prefer"
+                "sslmode": "prefer"
+              , "connect_timeout": 10
 EOL
 
         # Ajout du mot de passe s'il existe
         if [ ! -z "${!pass}" ]; then
-            echo "${!host}:${!port}:postgres:${!user}:${!pass}" >> /tmp/pgpass
-            chmod 600 /tmp/pgpass
+            pgfile="/var/lib/pgadmin/storage/${PGADMIN_DEFAULT_EMAIL/@/_}/pgpass"
+            mkdir -p $(dirname $pgfile)
+            echo "${!host}:${!port}:*:${!user}:${!pass}" >> $pgfile
+            chmod 600 $pgfile
             cat >> "$PGADMIN_SERVER_JSON_FILE" << EOL
-              , "PassFile": "/tmp/pgpass"
+              , "passfile": "/pgpass"
 EOL
         fi
 
